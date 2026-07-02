@@ -22,11 +22,23 @@
 #define LIGHT_LOW_PERCENT 20
 
 #define BUTTON_PIN 15
-#define BUZZER_PIN 26
+#define AUTO_LIGHT_LED_PIN 26
 
 #define GMT_OFFSET_SEC 7 * 3600
 #define DAYLIGHT_OFFSET_SEC 0
 
+#define IR_SENSOR_PIN 32
+#define IR_ACTIVE_LOW true
+
+#define SCREEN_AUTO_OFF_MS 30000UL
+
+#define FAN_RELAY_PIN 18
+
+#define HUMIDITY_FAN_ON 60.0
+#define HUMIDITY_FAN_OFF 58.0
+
+// Relay thường kích khi LOW
+#define RELAY_ACTIVE_LOW true
 
 struct WifiInfo {
   const char* ssid;

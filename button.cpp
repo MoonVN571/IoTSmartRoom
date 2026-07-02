@@ -1,7 +1,7 @@
 #include <Arduino.h>
+
 #include "config.h"
 #include "button.h"
-#include "buzzer.h"
 #include "state.h"
 #include "blynk_manager.h"
 
@@ -10,6 +10,8 @@ static bool lastAlarmButton = HIGH;
 
 static unsigned long lastScreenPress = 0;
 static unsigned long lastAlarmPress = 0;
+
+const unsigned long DEBOUNCE_MS = 250;
 
 void initButton() {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -20,36 +22,31 @@ void handleButton() {
   bool screenButton = digitalRead(BUTTON_PIN);
   bool alarmButton = digitalRead(ALARM_BUTTON_PIN);
 
-  if (lastScreenButton == HIGH && screenButton == LOW) {
-    if (millis() - lastScreenPress > 250) {
-      setScreenState(!screenOn);
-      beep(70);
-      syncBlynkScreen();
+  // Nút bật/tắt màn hình - D15
+  if (lastScreenButton == HIGH &&
+      screenButton == LOW &&
+      millis() - lastScreenPress > DEBOUNCE_MS) {
 
-      Serial.print("Screen button: ");
-      Serial.println(screenOn ? "ON" : "OFF");
+    setScreenState(!screenOn);
+    syncBlynkScreen();
 
-      lastScreenPress = millis();
-    }
+    lastScreenPress = millis();
   }
 
-  if (lastAlarmButton == HIGH && alarmButton == LOW) {
-    if (millis() - lastAlarmPress > 250) {
-      setAlarmState(!alarmEnabled);
-      beep(70);
-      syncBlynkAlarm();
+  // Nút bật/tắt cảnh báo - D13
+  if (lastAlarmButton == HIGH &&
+      alarmButton == LOW &&
+      millis() - lastAlarmPress > DEBOUNCE_MS) {
 
-      Serial.print("Alarm button: ");
-      Serial.println(alarmEnabled ? "ON" : "OFF");
+    setAlarmState(!alarmEnabled);
+    syncBlynkAlarm();
 
-      lastAlarmPress = millis();
-    }
+    Serial.print("Alarm: ");
+    Serial.println(alarmEnabled ? "ON" : "OFF");
+
+    lastAlarmPress = millis();
   }
 
   lastScreenButton = screenButton;
   lastAlarmButton = alarmButton;
-}
-
-bool isScreenOn() {
-  return screenOn;
 }
