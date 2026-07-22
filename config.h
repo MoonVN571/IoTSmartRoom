@@ -34,8 +34,8 @@
 
 #define FAN_RELAY_PIN 18
 
-#define HUMIDITY_FAN_ON 60.0
-#define HUMIDITY_FAN_OFF 58.0
+#define TEMPERATURE_FAN_ON 35.0
+#define HUMIDITY_LIGHT_ON 70.0
 
 // Relay thường kích khi LOW
 #define RELAY_ACTIVE_LOW true

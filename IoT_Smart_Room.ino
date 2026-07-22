@@ -54,6 +54,7 @@ void loop() {
   updateSensors();
   updateBlynk();
 
+  float temperature = getTemperature();
   int lightPercent = getLightPercent();
   float humidity = getHumidity();
 
@@ -62,8 +63,8 @@ void loop() {
   // LED đỏ: báo chế độ cảnh báo đang bật
   digitalWrite(ALARM_LED_PIN, alarmEnabled ? HIGH : LOW);
 
-  // LED trắng: chỉ sáng khi tắt cảnh báo và trời tối
-  bool autoLightOn = !alarmEnabled && isLowLight;
+  // Đèn: sáng khi độ ẩm > 70% (không cần bật/tắt theo trạng thái khác)
+  bool autoLightOn = humidity > HUMIDITY_LIGHT_ON;
   digitalWrite(AUTO_LIGHT_LED_PIN, autoLightOn ? HIGH : LOW);
 
   // Còi: chỉ kêu khi cảnh báo bật và trời tối
@@ -73,19 +74,17 @@ void loop() {
     alarmOff();
   }
 
-  // Quạt: bật khi độ ẩm > 60%
-  if (humidity > HUMIDITY_FAN_ON) {
+  // Quạt: bật khi nhiệt độ > 35°C, tắt khi nhiệt độ thấp hơn hoặc bằng
+  if (temperature > TEMPERATURE_FAN_ON) {
     setFan(true);
-  }
-  // Chỉ tắt khi độ ẩm xuống dưới 58%
-  else if (humidity < HUMIDITY_FAN_OFF) {
+  } else {
     setFan(false);
   }
 
   // OLED
   if (screenOn) {
     drawDashboard(
-      getTemperature(),
+      temperature,
       humidity,
       lightPercent,
       getTimeString(),
